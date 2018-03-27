@@ -21,6 +21,7 @@
 
 #include "utilities.c"
 #include "PID.c"
+#include "PIDCreation.h"
 #include "mogoDriveControl.c"
 
 string autons[] = {"hi", "hello", "my boy"};//list of 14 character strings naming autons
@@ -55,12 +56,11 @@ task autonomous()
 }
 
 
-int desiredMogo = 2880;
 task usercontrol()
 {
-	clearDebugStream();
+	startTask(mogoDriveControl);
+	/*clearDebugStream();
 	int mogoMotorValue, motorValueL, motorValueR;
-	//startTask(mogoDriveControl);
 	struct PIDLoop mogoPID;
 	initializePIDLoop(mogoPID, 0.1, 0.00002, 5, 100, 1000, mogoPot);
 	struct PIDLoop leftDrivePID;
@@ -79,5 +79,5 @@ task usercontrol()
 		motor[driveLM] = motor[driveRM] = -mogoMotorValue;
 
 		wait1Msec(50);
-	}
+	}*/
 }
