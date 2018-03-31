@@ -20,13 +20,11 @@ task mogoDriveControl(){//to control mobile goal transmission
 	initializePIDLoop(rightDrivePID, driveP, driveI ,driveD , 1, 1000, driveEncoderR);
 
 	//initialize values for mogo PID
-	initializePIDLoop(mogoPID, 0.1, 0.00002, 5, 10, 1000, mogoPot);
+	initializePIDLoop(mogoPID, 0.05, 0.00002, 5, 10, 1000, mogoPot);
 
 
 	while(true){
-		/*leftDrivePID.desiredValue = SensorValue(leftDrivePID.sensorPort);////when mogo triggered
-		rightDrivePID.desiredValue = SensorValue(leftDrivePID.sensorPort);*/
-		if(usingMogo&&true){//mobile goal mode | lock drive | run mobile goal PID
+		if(usingMogo){//mobile goal mode | lock drive | run mobile goal PID
 			//calculate drive PID values
 			leftDriveValue[0] = limit(calculatePIDValue(leftDrivePID));
 			rightDriveValue[0] = limit(calculatePIDValue(rightDrivePID));
@@ -52,6 +50,10 @@ task mogoDriveControl(){//to control mobile goal transmission
 
 		}
 		else{//driving mode | unlock drive | run mobile goal PID to hold in place
+
+			leftDrivePID.desiredValue = SensorValue(leftDrivePID.sensorPort);////when mogo triggered
+			rightDrivePID.desiredValue = SensorValue(leftDrivePID.sensorPort);
+
 			//get drive values
 			leftDriveValue[0] = vexRT(Ch2)+trueSpeed(vexRT(Ch4));
 			rightDriveValue[0] = vexRT(Ch2)-trueSpeed(vexRT(Ch4));
@@ -68,7 +70,7 @@ task mogoDriveControl(){//to control mobile goal transmission
 			rightDriveValue = scaleTo(rightDriveValue);*/
 
 			//set independent motors
-			motor[driveLF] =  motor[driveLB] = leftDriveValue[0];
+			motor[driveLF] = motor[driveLB] = leftDriveValue[0];
 			motor[driveRF] = motor[driveRB] = rightDriveValue[0];
 
 			//set transmisson motors to scaled values

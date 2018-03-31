@@ -56,28 +56,6 @@ task autonomous()
 }
 
 
-task usercontrol()
-{
+task usercontrol(){
 	startTask(mogoDriveControl);
-	/*clearDebugStream();
-	int mogoMotorValue, motorValueL, motorValueR;
-	struct PIDLoop mogoPID;
-	initializePIDLoop(mogoPID, 0.1, 0.00002, 5, 100, 1000, mogoPot);
-	struct PIDLoop leftDrivePID;
-	initializePIDLoop(leftDrivePID, 1, 0.0005, 15, 1, 1000, driveEncoderL);
-	struct PIDLoop rightDrivePID;
-	initializePIDLoop(rightDrivePID, 1, 0.0005, 15, 1, 1000, driveEncoderR);
-	while(true){
-		mogoPID.desiredValue = desiredMogo;
-		motorValueL = limit(calculatePIDValue(leftDrivePID));
-		motor[driveLF] = motor[driveLB] = motorValueL;
-
-		motorValueR = limit(calculatePIDValue(rightDrivePID));
-		motor[driveRF] = motor[driveRB] = motorValueR;
-
-		mogoMotorValue = limit(calculatePIDValue(mogoPID));
-		motor[driveLM] = motor[driveRM] = -mogoMotorValue;
-
-		wait1Msec(50);
-	}*/
 }
