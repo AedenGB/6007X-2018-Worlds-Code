@@ -25,7 +25,7 @@ int resetArray(int *arr, int val = 0){//set all values in an array to one value
 	return arr;
 }
 
-void printToDebug(float val){//formats integers to print to debug stram
+void printToDebug(float val){//formats integers to print to debug stream
 	string str;
 	sprintf(str, "%d", val);
 	strcat(str, " ");

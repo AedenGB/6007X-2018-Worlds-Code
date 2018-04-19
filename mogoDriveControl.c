@@ -6,18 +6,33 @@
 //transmission variable
 bool usingMogo = false;
 
+//project wide PID tuNULL
+float driveP = 1.0;
+float driveI = 0.0005;
+float driveD = 15;
+
+void initializePIDLoopsForLocking(){
+	initializePIDLoop(leftDistanceDrivePID, driveP, driveI, driveD, 1, 1000, driveEncoderL);
+	initializePIDLoop(rightAngleDrivePID, driveP, driveI ,driveD , 1, 1000, driveEncoderR);
+}
+
+void initializePIDLoopsForDriving(){
+	initializePIDLoop(leftDistanceDrivePID, driveP, driveI, driveD, 1, 1000, -1);//sensor value
+	initializePIDLoop(rightAngleDrivePID, driveP, driveI ,driveD , 1, 1000, driveEncoderR);
+}
+
+
 task mogoDriveControl(){//to control mobile goal transmission
-	//project wide PID tuning
-	float driveP = 1.0;
-	float driveI = 0.0005;
-	float driveD = 15;
+
+
+	float turningPower = 0;
+	float forwardPower = 0;
 
 	//for setting transmission seperately
 	float leftDriveValue[2];
 	float rightDriveValue[2];
 
-	initializePIDLoop(leftDrivePID, driveP, driveI, driveD, 1, 1000, driveEncoderL);
-	initializePIDLoop(rightDrivePID, driveP, driveI ,driveD , 1, 1000, driveEncoderR);
+
 
 	//initialize values for mogo PID
 	initializePIDLoop(mogoPID, 0.05, 0.00002, 5, 10, 1000, mogoPot);
@@ -26,8 +41,8 @@ task mogoDriveControl(){//to control mobile goal transmission
 	while(true){
 		if(usingMogo){//mobile goal mode | lock drive | run mobile goal PID
 			//calculate drive PID values
-			leftDriveValue[0] = limit(calculatePIDValue(leftDrivePID));
-			rightDriveValue[0] = limit(calculatePIDValue(rightDrivePID));
+			leftDriveValue[0] = limit(calculatePIDValue(leftDistanceDrivePID));
+			rightDriveValue[0] = limit(calculatePIDValue(rightAngleDrivePID));
 
 			//calculate mobile goal PID values
 			leftDriveValue[1] = rightDriveValue[1] = -limit(calculatePIDValue(mogoPID));
@@ -51,12 +66,15 @@ task mogoDriveControl(){//to control mobile goal transmission
 		}
 		else{//driving mode | unlock drive | run mobile goal PID to hold in place
 
-			leftDrivePID.desiredValue = SensorValue(leftDrivePID.sensorPort);////when mogo triggered
-			rightDrivePID.desiredValue = SensorValue(leftDrivePID.sensorPort);
-
 			//get drive values
-			leftDriveValue[0] = vexRT(Ch2)+trueSpeed(vexRT(Ch4));
-			rightDriveValue[0] = vexRT(Ch2)-trueSpeed(vexRT(Ch4));
+			if(bIfiAutonomousMode){
+				leftDriveValue[0] = forwardPower+turningPower;
+				rightDriveValue[0] = forwardPower-turningPower;
+			}
+			else{
+				leftDriveValue[0] = vexRT(Ch2)+trueSpeed(vexRT(Ch4));
+				rightDriveValue[0] = vexRT(Ch2)-trueSpeed(vexRT(Ch4));
+			}
 
 			//calculate mobile goal PID values
 			leftDriveValue[1] = rightDriveValue[1] = -limit(calculatePIDValue(mogoPID));
