@@ -5,6 +5,7 @@
 #pragma config(Sensor, dgtl3,  driveEncoderL,  sensorQuadEncoder)
 #pragma config(Sensor, dgtl5,  intake,         sensorDigitalOut)
 #pragma config(Sensor, dgtl6,  fourBar,        sensorDigitalOut)
+#pragma config(Sensor, dgtl7,  intakeSensor,   sensorDigitalIn)
 #pragma config(Motor,  port1,           driveRB,       tmotorVex393TurboSpeed_HBridge, openLoop)
 #pragma config(Motor,  port2,           driveRM,       tmotorVex393TurboSpeed_MC29, openLoop)
 #pragma config(Motor,  port3,           driveRF,       tmotorVex393TurboSpeed_MC29, openLoop, reversed)
@@ -27,7 +28,7 @@
 #include "Vex_Competition_Includes.c"
 
 #include "utilities.c"
-#include "tinyExpr/tinyExpr.h"
+//#include "tinyExpr/tinyExpr.h"
 #include "subsystemFunctions.c"
 #include "PID.c"
 #include "PIDCreation.h"
@@ -35,6 +36,7 @@
 #include "liftControl.c"
 #include "stackingVariables.h"
 #include "stackingMasterControl.c"
+#include "autons.c"
 
 string autons[] = {"hi", "hello", "my boy"};//list of 14 character strings naming autons
 #include "autonSelect.c"
@@ -52,7 +54,7 @@ task autonomous()
    switch(autonType){
 		case 0:
 		displayAuton(autonType);
-
+			fourConesIn20();
 		break;
 		case 1:
 		displayAuton(autonType);

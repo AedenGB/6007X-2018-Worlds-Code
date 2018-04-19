@@ -5,6 +5,25 @@
 
 void stackCone(){
 	liftPID.desiredValue = LIFT_DOWN_POSITION;
+	clearTimer(T2);
+	while(SensorValue(intakeSensor)==0){
+		if(time1(T2)>0.3){
+			liftPID.desiredValue = LIFT_READY_INTAKE_POSITION;
+			return;
+		}
+		wait1Msec(5);
+	}
+	liftPID.desiredValue = LIFT_PLACING_CONE_ONE_POSITION+numCones*HEIGHT_PER_CONE;
+	while(fabs(liftPID.error)>50){
+		delay(5);
+	}
+	fourBarUp();
+	delay(100);
+	openIntake();
+	delay(200);
+	fourBarDown();
+	delay(300);
+	liftPID.desiredValue = LIFT_READY_INTAKE_POSITION;
 }
 
 void intakeMobileGoal(){
@@ -14,7 +33,6 @@ void intakeMobileGoal(){
 	rightAngleDrivePID.desiredValue = SensorValue(rightAngleDrivePID.sensorPort);
 	usingMogo = true;
 	if(mobileGoalIn){
-
 			//raise lift
 			liftPID.desiredValue = LIFT_PLACING_CONE_ONE_POSITION + numCones*HEIGHT_PER_CONE + 100;
 			while(fabs(liftPID.error) > 50){
