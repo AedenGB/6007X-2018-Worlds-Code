@@ -8,34 +8,72 @@ void stackCone(){
 }
 
 void intakeMobileGoal(){
+	//get ready to use mogo
+	initializePIDLoopsForLocking();
 	leftDistanceDrivePID.desiredValue = SensorValue(leftDistanceDrivePID.sensorPort);
 	rightAngleDrivePID.desiredValue = SensorValue(rightAngleDrivePID.sensorPort);
-	initializePIDLoopsForLocking();
 	usingMogo = true;
 	if(mobileGoalIn){
-		liftPID.desiredValue = LIFT_PLACING_CONE_ONE_POSITION + numCones*HEIGHT_PER_CONE + 100;
-		while(fabs(liftPID.error) > 50){
-			wait1Msec(5);
-		}
-		fourBarUp();
-		wait1Msec(50);
 
+			//raise lift
+			liftPID.desiredValue = LIFT_PLACING_CONE_ONE_POSITION + numCones*HEIGHT_PER_CONE + 100;
+			while(fabs(liftPID.error) > 50){
+				wait1Msec(5);
+			}
+			fourBarUp();
+		if(numCones>1){
+			//go down on and grab top cone
+			wait1Msec(50);
+	 		liftControlMode = power;
+	 		clearTimer(T1);
+	 		setLift(-40);
+	 		delay(500);
+	 		setLift(-15);
+	 		closeIntake();
+		}
+
+ 		//put mobile goal out
+ 		mogoPID.desiredValue = MOBILE_GOAL_OUT_POSITION;
+ 		while(SensorValue(mogoPot)<MOBILE_GOAL_VERTICAL_POSITION){
+ 			wait1Msec(5);
+ 		}
+ 		fourBarDown();
+ 		while(fabs(mogoPID.error)<50){
+ 			wait1Msec(5);
+ 		}
+ 		delay(200);
+
+ 		//get off stack
+ 		openIntake();
+ 		fourBarUp();
+ 		delay(10);
+ 		liftControlMode = position;
 	}
 	else{
-
+		//get lift out of the way
+		liftPID.desiredValue = LIFT_PLACING_CONE_ONE_POSITION + 5*HEIGHT_PER_CONE + 100;
+		mogoPID.desiredValue = MOBILE_GOAL_IN_POSITION;
+		//wait till mobile goal intake is in
+		while(fabs(mogoPID.error)>50){
+ 			wait1Msec(5);
+ 		}
+ 		fourBarDown();
 	}
+	usingMogo = false;
 	initializePIDLoopsForDriving();
 }
 
 task stackingMasterControl(){//controls master functions of stacking
 	while(true){
 		//if has a mobile goal, get ready to intake a cone
-		if(hasMobileGoal){
+		if(mobileGoalIn){
+			mogoPID.desiredValue = MOBILE_GOAL_IN_POSITION;
 			liftPID.desiredValue = LIFT_READY_INTAKE_POSITION;
 			fourBarDown();
 			openIntake();
 		}
 		else{
+			mogoPID.desiredValue = MOBILE_GOAL_OUT_POSITION;
 			liftPID.desiredValue = LIFT_READY_INTAKE_POSITION;
 			fourBarUp();
 			openIntake();
@@ -48,7 +86,7 @@ task stackingMasterControl(){//controls master functions of stacking
 		}
 
 		//if has mogo and stack button pressed, stack cone
-		if(vexRT[Btn6U]==1 && hasMobileGoal){
+		if(vexRT[Btn6U]==1 && mobileGoalIn){
 			stackCone();
 		}
 

@@ -6,10 +6,20 @@
 //transmission variable
 bool usingMogo = false;
 
-//project wide PID tuNULL
+//project wide PID tuning
 float driveP = 1.0;
 float driveI = 0.0005;
 float driveD = 15;
+
+//project wide forward PID tuning
+float forwardP = 1.0;
+float forwardI = 0.0005;
+float forwardD = 15;
+
+//project wide forward PID tuning
+float turningP = 1.0;
+float turningI = 0.0005;
+float turningD = 15;
 
 void initializePIDLoopsForLocking(){
 	initializePIDLoop(leftDistanceDrivePID, driveP, driveI, driveD, 1, 1000, driveEncoderL);
@@ -17,14 +27,12 @@ void initializePIDLoopsForLocking(){
 }
 
 void initializePIDLoopsForDriving(){
-	initializePIDLoop(leftDistanceDrivePID, driveP, driveI, driveD, 1, 1000, -1);//sensor value
-	initializePIDLoop(rightAngleDrivePID, driveP, driveI ,driveD , 1, 1000, driveEncoderR);
+	initializePIDLoop(leftDistanceDrivePID, forwardP, forwardI, forwardD, 1, 1000, -1);//sensor value will be manually entered
+	initializePIDLoop(rightAngleDrivePID, turningP, turningI ,turningD , 1, 1000, gyro);
 }
 
 
 task mogoDriveControl(){//to control mobile goal transmission
-
-
 	float turningPower = 0;
 	float forwardPower = 0;
 
@@ -51,10 +59,6 @@ task mogoDriveControl(){//to control mobile goal transmission
 			leftDriveValue[1] += leftDriveValue[0];
 			rightDriveValue[1] += rightDriveValue[0];
 
-			//scale values to 127, to use ratio instead of actual values
-			/*leftDriveValue = scaleTo(leftDriveValue);
-			rightDriveValue = scaleTo(rightDriveValue);*/
-
 			//set independent motors
 			motor[driveLF] =  motor[driveLB] = leftDriveValue[0];
 			motor[driveRF] = motor[driveRB] = rightDriveValue[0];
@@ -65,9 +69,10 @@ task mogoDriveControl(){//to control mobile goal transmission
 
 		}
 		else{//driving mode | unlock drive | run mobile goal PID to hold in place
-
 			//get drive values
 			if(bIfiAutonomousMode){
+				forwardPower = limit(calculatePIDValue(leftDistanceDrivePID,(SensorValue(driveEncoderL)+SensorValue(driveEncoderR))/2));
+				turningPower = limit(calculatePIDValue(rightAngleDrivePID));
 				leftDriveValue[0] = forwardPower+turningPower;
 				rightDriveValue[0] = forwardPower-turningPower;
 			}
@@ -82,10 +87,6 @@ task mogoDriveControl(){//to control mobile goal transmission
 			//sum drive values with mobile goal values
 			leftDriveValue[1] += leftDriveValue[0];
 			rightDriveValue[1] += rightDriveValue[0];
-
-			//scale values to 127, to use ratio instead of actual values
-			/*leftDriveValue = scaleTo(leftDriveValue);
-			rightDriveValue = scaleTo(rightDriveValue);*/
 
 			//set independent motors
 			motor[driveLF] = motor[driveLB] = leftDriveValue[0];

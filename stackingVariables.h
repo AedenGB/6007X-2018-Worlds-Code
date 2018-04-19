@@ -7,7 +7,6 @@
 int numCones = 0;
 
 //mobile goal variables
-bool hasMobileGoal = false;
 bool mobileGoalIn = true;
 
 //at autoloader intaking height
@@ -25,5 +24,6 @@ const float HEIGHT_PER_CONE = 100;
 //mobile goal positions
 const float MOBILE_GOAL_OUT_POSITION = 2000;
 const float MOBILE_GOAL_IN_POSITION = 100;
+const float MOBILE_GOAL_VERTICAL_POSITION = 700;
 
 #endif
