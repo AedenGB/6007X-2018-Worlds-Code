@@ -8,7 +8,7 @@ enum controlMode liftControlMode = position;
 
 task liftControl(){//to control mobile goal transmission
 	//initialize values
-	initializePIDLoop(liftPID, 0.05, 0, 0, 10, 1000, liftPot);
+	initializePIDLoop(liftPID, 0.05, 0, 0, 10, 1000, liftPot, true);
 
 	//continuously set lift motors to calculated values
 	while(true){

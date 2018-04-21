@@ -4,15 +4,17 @@
 #pragma config(Sensor, dgtl1,  driveEncoderR,  sensorQuadEncoder)
 #pragma config(Sensor, dgtl3,  driveEncoderL,  sensorQuadEncoder)
 #pragma config(Sensor, dgtl5,  intake,         sensorDigitalOut)
-#pragma config(Sensor, dgtl6,  fourBar,        sensorDigitalOut)
-#pragma config(Sensor, dgtl7,  intakeSensor,   sensorDigitalIn)
-#pragma config(Motor,  port1,           driveRB,       tmotorVex393TurboSpeed_HBridge, openLoop)
+#pragma config(Sensor, dgtl6,  fourBarL,       sensorDigitalOut)
+#pragma config(Sensor, dgtl7,  fourBarR,       sensorDigitalOut)
+#pragma config(Sensor, dgtl8,  intakeSensor,   sensorDigitalIn)
+#pragma config(Sensor, dgtl10, hellotest1,     sensorNone)
+#pragma config(Motor,  port1,           driveRB,       tmotorVex393TurboSpeed_HBridge, openLoop, reversed)
 #pragma config(Motor,  port2,           driveRM,       tmotorVex393TurboSpeed_MC29, openLoop)
 #pragma config(Motor,  port3,           driveRF,       tmotorVex393TurboSpeed_MC29, openLoop, reversed)
-#pragma config(Motor,  port4,           liftLB,        tmotorVex393TurboSpeed_MC29, openLoop)
-#pragma config(Motor,  port5,           liftLT,        tmotorVex393TurboSpeed_MC29, openLoop)
-#pragma config(Motor,  port6,           liftRB,        tmotorVex393TurboSpeed_MC29, openLoop)
-#pragma config(Motor,  port7,           liftRT,        tmotorVex393TurboSpeed_MC29, openLoop)
+#pragma config(Motor,  port4,           liftLT,        tmotorVex393TurboSpeed_MC29, openLoop)
+#pragma config(Motor,  port5,           liftLB,        tmotorVex393TurboSpeed_MC29, openLoop)
+#pragma config(Motor,  port6,           liftRT,        tmotorVex393TurboSpeed_MC29, openLoop, reversed)
+#pragma config(Motor,  port7,           liftRB,        tmotorVex393TurboSpeed_MC29, openLoop, reversed)
 #pragma config(Motor,  port8,           driveLF,       tmotorVex393TurboSpeed_MC29, openLoop)
 #pragma config(Motor,  port9,           driveLM,       tmotorVex393TurboSpeed_MC29, openLoop, reversed)
 #pragma config(Motor,  port10,          driveLB,       tmotorVex393TurboSpeed_HBridge, openLoop)
@@ -71,5 +73,7 @@ task autonomous()
 
 
 task usercontrol(){
-	startTask(mogoDriveControl);
+	startTask(liftPID);
+	liftPID.desiredValue = LIFT_READY_INTAKE_AUTOLOADER_POSITION;
+	//startTask(mogoDriveControl);
 }

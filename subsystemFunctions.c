@@ -20,12 +20,12 @@ void openIntake(){
 
 //puts 4 bar down
 void fourBarDown(){
-	SensorValue(fourBar) = 1;
+	SensorValue(fourBarL) = SensorValue(fourBarR) = 1;
 }
 
 //lifts 4 bar
 void fourBarUp(){
-	SensorValue(fourBar) = 0;
+	SensorValue(fourBarL) = SensorValue(fourBarR) = 0;
 }
 
 
