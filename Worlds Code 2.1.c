@@ -1,13 +1,12 @@
-#pragma config(Sensor, in1,    mogoPot,        sensorPotentiometer)
-#pragma config(Sensor, in2,    gyro,           sensorGyro)
+#pragma config(Sensor, in1,    gyro,           sensorGyro)
+#pragma config(Sensor, in2,    mogoPot,        sensorPotentiometer)
 #pragma config(Sensor, in3,    liftPot,        sensorPotentiometer)
 #pragma config(Sensor, dgtl1,  driveEncoderR,  sensorQuadEncoder)
 #pragma config(Sensor, dgtl3,  driveEncoderL,  sensorQuadEncoder)
-#pragma config(Sensor, dgtl5,  intake,         sensorDigitalOut)
 #pragma config(Sensor, dgtl6,  fourBarL,       sensorDigitalOut)
 #pragma config(Sensor, dgtl7,  fourBarR,       sensorDigitalOut)
 #pragma config(Sensor, dgtl8,  intakeSensor,   sensorDigitalIn)
-#pragma config(Sensor, dgtl10, hellotest1,     sensorNone)
+#pragma config(Sensor, dgtl9,  intake,         sensorDigitalOut)
 #pragma config(Motor,  port1,           driveRB,       tmotorVex393TurboSpeed_HBridge, openLoop, reversed)
 #pragma config(Motor,  port2,           driveRM,       tmotorVex393TurboSpeed_MC29, openLoop)
 #pragma config(Motor,  port3,           driveRF,       tmotorVex393TurboSpeed_MC29, openLoop, reversed)
@@ -31,6 +30,9 @@
 
 #include "utilities.c"
 //#include "tinyExpr/tinyExpr.h"
+string autons[] = {"hi", "hello", "my boy"};//list of 14 character strings naming autons
+#include "autonSelect.c"
+
 #include "subsystemFunctions.c"
 #include "PID.c"
 #include "PIDCreation.h"
@@ -40,23 +42,30 @@
 #include "stackingMasterControl.c"
 #include "autons.c"
 
-string autons[] = {"hi", "hello", "my boy"};//list of 14 character strings naming autons
-#include "autonSelect.c"
-
 void pre_auton()
 {
   bStopTasksBetweenModes = true;
 	stopTask(autonSelect);
 	startTask(autonSelect);
-	//resetGyro();
+	int port = gyro;
+	SensorType[port] = sensorNone;
+	wait1Msec(500);
+	SensorType[port] = sensorGyro;
+	wait1Msec(1500);
 }
 
 task autonomous()
 {
-   switch(autonType){
+	clearTimer(T1);
+	SensorValue(driveEncoderL) = SensorValue(driveEncoderR) = SensorValue(gyro) = 0;
+	startTask(mogoDriveControl);
+	startTask(liftControl);
+	fourConesIn20();
+	printToDebug(time1[T1]);
+  switch(autonType){
 		case 0:
-		displayAuton(autonType);
-			fourConesIn20();
+			displayAuton(autonType);
+
 		break;
 		case 1:
 		displayAuton(autonType);
@@ -71,9 +80,68 @@ task autonomous()
 	}
 }
 
+task liftPIDDebugger(){
+	clearDebugStream();
+	datalogClear();
+	while(true){
+		datalogAddValueWithTimeStamp(0,liftPID.error);//1
+		datalogAddValueWithTimeStamp(1,limit(liftPID.iVal*liftPID.kI,-50,50));//2
+		datalogAddValueWithTimeStamp(2,liftPID.dVal*liftPID.kD);//3
+		datalogAddValueWithTimeStamp(3,liftPID.dAverage*liftPID.kD/5.0/12.0);//3
+		datalogAddValueWithTimeStamp(4,liftPID.pVal*liftPID.kP);//5
+		datalogAddValueWithTimeStamp(5,motor[liftLB]*2);//6
+		datalogAddValueWithTimeStamp(6,127*2);//7
+		datalogAddValueWithTimeStamp(7,-127*2);//8
+		printToDebug(motor[liftLB]);
+		delay(5);
+	}
+}
+
 
 task usercontrol(){
-	startTask(liftPID);
-	liftPID.desiredValue = LIFT_READY_INTAKE_AUTOLOADER_POSITION;
-	//startTask(mogoDriveControl);
+	startTask(stackingMasterControl);
+	while(true){
+		clearDebugStream();
+		printToDebug(numCones);
+		delay(5);
+	}
+
+	/*startTask(liftPIDDebugger);
+	startTask(liftControl);
+	liftPID.desiredValue = 3000;*/
+
+	/*startTask(mogoDriveControl);
+	mogoPID.desiredValue = MOBILE_GOAL_OUT_POSITION;
+	distanceDrivePID.enabled = true;
+	angleDrivePID.enabled = true;
+	mogoPID.enabled = true;
+	clearDebugStream();
+	while(true){
+		if(vexRT[Btn6U] == 1){
+				mogoPID.desiredValue = MOBILE_GOAL_OUT_POSITION;
+		}
+		if(vexRT[Btn6D] == 1){
+				mogoPID.desiredValue = MOBILE_GOAL_IN_POSITION;
+		}
+		printToDebug(mogoPID.error);
+	  writeDebugStreamLine("");
+	}*/
+
+	/*int t = 0;
+	numCones = 4;
+	startTask(liftControl);
+	t = nSysTime;
+	stackCone();
+	clearDebugStream();
+	printToDebug(nSysTime-t);*/
+
+	/*delay(1000);
+
+	while(true){
+		delay(1000);
+		numCones++;
+		t = nSysTime;
+		stackCone();
+		printToDebug(nSysTime-t);
+	}*/
 }

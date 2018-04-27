@@ -4,8 +4,8 @@
 #define FILE_PIDCreation_SEEN
 
 //create drive PID loops
-struct PIDLoop leftDistanceDrivePID;
-struct PIDLoop rightAngleDrivePID;
+struct PIDLoop distanceDrivePID;
+struct PIDLoop angleDrivePID;
 
 //create mogo PID
 struct PIDLoop mogoPID;

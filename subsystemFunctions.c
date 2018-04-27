@@ -10,12 +10,12 @@ void setLift(float val){
 
 //closes intake clip
 void closeIntake(){
-	SensorValue(intake) = 1;
+	SensorValue(intake) = 0;
 }
 
 //opens intake clip
 void openIntake(){
-	SensorValue(intake) = 0;
+	SensorValue(intake) = 1;
 }
 
 //puts 4 bar down

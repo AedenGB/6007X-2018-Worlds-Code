@@ -13,8 +13,6 @@ float turningP = 0.3;
 float turningI = 0.0008;
 float turningD = 350;
 
-int oldErrorMogo = 0;
-
 task mogoDriveControl(){//to control mobile goal transmission
 	float turningPower = 0;
 	float forwardPower = 0;
@@ -24,7 +22,7 @@ task mogoDriveControl(){//to control mobile goal transmission
 	float rightDriveValue[2];
 
 	//initialize values for mogo PID
-	initializePIDLoop(mogoPID, 0.06, 0, 0, 30, 500, mogoPot);//kI 0.00002
+	initializePIDLoop(mogoPID, 0.06, /*0.0001*/0, 0, 30, 500, mogoPot);//kI 0.00002
 
 	initializePIDLoop(distanceDrivePID, forwardP, forwardI, forwardD, 1, 200, -1, true);//sensor value will be manually entered
 	initializePIDLoop(angleDrivePID, turningP, turningI ,turningD , 1, 70, gyro, true);
@@ -48,14 +46,10 @@ task mogoDriveControl(){//to control mobile goal transmission
 		}
 
 		//calculate mobile goal PID values
-		leftDriveValue[1] = rightDriveValue[1] = -1*mogoPID.kP*(mogoPID.desiredValue-SensorValue(mogoPot))
-		+ mogoPID.kD*((mogoPID.desiredValue-SensorValue(mogoPot))-oldErrorMogo);
+		leftDriveValue[1] = rightDriveValue[1] = 1*limit(calculatePIDValue(mogoPID));
+		/*leftDriveValue[1] = -1.25*limit(calculatePIDValue(mogoPID))
 
-		oldErrorMogo = mogoPID.desiredValue-SensorValue(mogoPot);
-
-		/*float tmp = calculatePIDValue(mogoPID);
-		leftDriveValue[1] = 1*limit(tmp);
-		rightDriveValue[1] = 1*limit(tmp);*/
+		rightDriveValue[1] = leftDriveValue[1];*/
 
 		//sum drive values with mobile goal values
 		leftDriveValue[1] += leftDriveValue[0];
