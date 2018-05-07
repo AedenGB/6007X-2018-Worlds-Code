@@ -40,6 +40,9 @@ string autons[] = {"hi", "hello", "my boy"};//list of 14 character strings namin
 #include "liftControl.c"
 #include "stackingVariables.h"
 #include "stackingMasterControl.c"
+
+
+#include "stack in auto.c"
 #include "autons.c"
 
 void pre_auton()
@@ -102,7 +105,7 @@ task usercontrol(){
 	startTask(stackingMasterControl);
 	while(true){
 		clearDebugStream();
-		printToDebug(numCones);
+		printToDebug(SensorValue(mogoPot));
 		delay(5);
 	}
 

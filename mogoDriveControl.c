@@ -49,7 +49,7 @@ task mogoDriveControl(){//to control mobile goal transmission
 
 		//calculate mobile goal PID values
 		leftDriveValue[1] = rightDriveValue[1] = -1*mogoPID.kP*(mogoPID.desiredValue-SensorValue(mogoPot))
-		+ mogoPID.kD*((mogoPID.desiredValue-SensorValue(mogoPot))-oldErrorMogo);
+		+ -1*mogoPID.kD*((mogoPID.desiredValue-SensorValue(mogoPot))-oldErrorMogo);
 
 		oldErrorMogo = mogoPID.desiredValue-SensorValue(mogoPot);
 
@@ -81,6 +81,7 @@ void forward(float distance){
 }
 
 void turn(float angle){
+	angle = - angle;
 	angleDrivePID.kP = turningP;
 	angleDrivePID.desiredValue += (isRight? -1:1)*angle*10*6.7/9;
 	distanceDrivePID.desiredValue += 0;

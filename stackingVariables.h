@@ -24,6 +24,6 @@ const float HEIGHT_PER_CONE = 105;
 //mobile goal positions
 const float MOBILE_GOAL_OUT_POSITION = 1620;
 const float MOBILE_GOAL_IN_POSITION = 3630;//3675
-const float MOBILE_GOAL_VERTICAL_POSITION = 2600;
+const float MOBILE_GOAL_VERTICAL_POSITION = 2680;
 
 #endif

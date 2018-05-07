@@ -20,31 +20,35 @@ void fourConesIn20(){
 
 	numCones = 1;
 	stackCone();
-
-	forward(450);
-	delay(450);
+	forward(550);
+	delay(550);
+	liftPID.desiredValue = LIFT_DOWN_POSITION-150;
+	clearTimer(T2);
+	while(SensorValue(intakeSensor)==1){
+		if(time1(T2)>500){
+			liftPID.desiredValue = LIFT_READY_INTAKE_POSITION;
+			break;
+		}
+		wait1Msec(5);
+	}
+	closeIntake();
+	wait1Msec(50);
+	liftPID.desiredValue+=1000;
+	forward(-2200);
+	delay(10);
+	numCones = 3;
 	stackCone();
 
-	forward(700);
-	delay(500);
-	distanceDrivePID.desiredValue = SensorValue(driveEncoderL) = SensorValue(driveEncoderR) = 0;
-	forward(-80);
-	delay(100);
-	stackConeA();
-
-	forward(-2500);
-	stackConeB();
-	//delay(10);
 	liftPID.desiredValue+=500;
-	delay(700);
+	delay(1200);
 	turn(45);
-	delay(600);
-	forward(-900);
+	delay(500);
+	forward(-970);
 	delay(800);
 	turn(90);
-	delay(400);
-	forward(1500);
-	delay(800);
+	delay(500);
+	forward(1200);
+	delay(1000);
 	numCones = 4;
 	intakeMobileGoal();
 	forward(-1000);
