@@ -48,7 +48,7 @@ void initializePIDLoop(struct PIDLoop this, float kP, float kI, float kD, float 
 	this.oldSensorValue = 0;
 	this.timeChange = 0;
 	this.writeCounterD = 0;
-	if(this.enabled != NULL){
+	if(this.enabled != NULL){//if initializing this PID loop for the first time, enable it
 		this.enabled = true;
 	}
 }
